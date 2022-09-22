@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4edc1f17-2e90-4972-9cba-c7a7101b90c8" >
+		<http:listener-connection host="0.0.0.0" port="8083" />
+	</http:listener-config>
+	<flow name="assignment1Flow" doc:id="01b38ab5-1f13-4748-9af1-9aee7aa3135b" >
+		<http:listener doc:name="HTTP GET /exercise" doc:id="fc3b0a93-80de-46ec-9bd4-51e9abb76ba8" path="/exercise"/>
+		<set-payload value="#[output applicationjson&#10;---&#10;{&#10;	uriParams {&#10;		id 4222&#10;	},&#10;	queryParams {&#10;		test 2323,&#10;		test 34111&#10;	}&#10;}]" doc:name="Set Payload" doc:id="0e472ff5-a4ac-4973-b9a8-e75d181a2f61" />
+	</flow>
+</mule>
