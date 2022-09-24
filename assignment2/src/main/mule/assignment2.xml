@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="exercise1" doc:id="3144815c-eb5c-4b0c-bafd-598f8c2a2a55" >
+		<ee:transform doc:name="Transform Message" doc:id="94d7f1e8-ec46-451e-84a0-cd7a8be68111" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var itemsList = {
+	"items": [
+		"item": {
+			"description": "Product1",
+			"quantity": 1,
+			"unit_price": 20,
+			"toDiscount": "No"
+		},
+		"item": {
+			"description": "Product2",
+			"quantity": 2,
+			"unit_price": 30,
+			"toDiscount": "Yes"
+		},
+		"item": {
+			"description": "Product3",
+			"quantity": 3,
+			"unit_price": 40,
+			"toDiscount": "Yes"
+		}
+	]
+}
+
+var a = [17,10,20,5,10]
+var sum_prices_cost = sum(a)
+
+output application/json
+---
+
+// quantity * unit_price > sum_prices_cost
+
+{
+	products: itemsList.items.item map (item,index) -> 
+	item.description filter (sum_prices_cost > item.quantity * item.unit_price )
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="exercise2" doc:id="90c0a6e6-97bd-4b7d-ae2a-9229ceedf34b" >
+		<ee:transform doc:name="Transform Message" doc:id="be8a44f9-8cba-42ff-bc62-117755bd2b65" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var tax = 0.23
+var discount = 0.10
+
+var itemsList = {
+	"items":[
+		"item":{
+			"description": "Product1",
+			"quantity": 1,
+			"unit_price": 20,
+			"toDiscount": "No"
+		},
+		"item":{
+			"description": "Product2",
+			"quantity": 2,
+			"unit_price": 30,
+			"toDiscount": "Yes"
+		},
+		"item":{
+			"description": "Product3",
+			"quantity": 3,
+			"unit_price": 40,
+			"toDiscount": "Yes"
+		}
+	]
+}
+
+output application/json
+---
+{
+	invoice: {
+		"items": itemsList.items map (object,index) -> {
+			"item": object.item.description,
+			"quantity": object.item.quantity,
+			"unit_price": object.item.unit_price,
+			"discount": if(object.item.toDiscount == "Yes") discount else 0.00,
+			"cost": 
+				if (object.item.toDiscount == "Yes")
+					do {
+						var quantity = object.item.quantity
+						var price = object.item.unit_price
+						var final_price = quantity*price - quantity*price*discount
+						
+						---
+						final_price
+					}
+				else
+					object.item.unit_price * object.item.quantity
+		},
+		
+		"total": {
+			"total_cost_before_taxation": sum(itemsList.items.item.unit_price),
+			"taxation": tax*100 ++ "%",
+			"total_cost_after_taxation": 
+			do{
+				var sum_of_prices = sum(itemsList.items.item.unit_price) 
+				var final = tax * sum_of_prices
+				---
+				final + sum_of_prices
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
