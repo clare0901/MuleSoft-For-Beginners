@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="basicFlow" doc:id="e075abd0-c08c-4669-b3ff-653db5233331" >
+		<ee:transform doc:name="create json payload" doc:id="97a976f6-f440-4b5a-9438-37f5cff50c87" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"candidates": [{
+		fname: "Clare",
+		lname: "Rebello",
+		age: 21
+	},
+	{
+		fname: "Chris",
+		lname: "Rebello",
+		age: 22
+	},
+	{
+		fname: "Savio",
+		lname: "Rebello",
+		age: 25
+	},
+	{
+		fname: "Kavita",
+		lname: "Rebello",
+		age: 55
+	},
+	{
+		fname: "Richard",
+		lname: "Rebello",
+		age: 57
+	}]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="transform json" doc:id="ea1f43f9-56b6-40d1-8094-043300a9a1bb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var x = {
+	"candidates": [{
+		fname: "Clare",
+		lname: "Rebello",
+		age: 21
+	},
+	{
+		fname: "Chris",
+		lname: "Rebello",
+		age: 22
+	},
+	{
+		fname: "Savio",
+		lname: "Rebello",
+		age: 25
+	},
+	{
+		fname: "Kavita",
+		lname: "Rebello",
+		age: 55
+	},
+	{
+		fname: "Richard",
+		lname: "Rebello",
+		age: 57
+	}]
+}
+output application/json
+---
+x.candidates map {
+	"Full Name": $.fname ++ " " ++ $.lname,
+	"Age": $.age
+} filter ($.Age > 50)
+
+
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="transform json to csv" doc:id="b26965de-a583-47f2-aea5-1076674f0d62" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="basicFlow1" doc:id="437485e7-42a0-4556-afbc-81494893fbca" >
+		<ee:transform doc:name="json to xml" doc:id="3678c21e-be1b-4abf-9a02-2c72cf801966" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var x = [
+	"candidates": 
+	{
+		"name": "clare",
+		"age": "21"
+	},
+	"candidates": 
+	{
+		"name": "chris",
+		"age": "22"
+	}
+]
+output application/xml
+---
+users: {(
+	x.candidates map(object,value) -> user @(name: object.name): 
+	{
+		"name": upper(object.name),
+		"age": object.age
+	}
+)}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="read file from src/main/resources using dw" doc:id="ab3a814a-3cc2-4281-b635-33cdebd4e7de" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+readUrl('classpath://file.json')]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="pluck obj" doc:id="cdf718a3-189f-4a83-998a-9e4ae1ccad9d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var name = {
+	"0" : "Clare",
+	"1" : "Chris"
+}
+
+output application/json
+---
+name pluck ((value) -> value)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Filter array with even numbers" doc:id="086c2647-b279-458c-bec4-4d694a79c6b6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var e = [0,1,2,3,4,5,6,7,8,9]
+
+output application/json
+---
+{
+	numbers: e filter ((item, index) -> isEven(item))
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Filter object with odd numbers" doc:id="493652ce-7fea-4bc7-984d-984213c47d4c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var numbers = {
+	"0" : 0,
+	"1" : 1,
+	"2" : 2,
+	"3" : 3,
+	"4" : 4,
+	"5" : 5,
+	"6" : 6,
+	"7" : 7,
+	"8" : 8,
+	"9" : 9
+}
+
+
+output application/json
+---
+
+{
+	num: numbers filterObject ((value) -> value>3 )
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="selectors_for_objects" doc:id="20e2b9bb-efdb-47d2-8663-9407121e221c" >
+		<ee:transform doc:name="single object" doc:id="ca63e54e-e6fd-4351-bc09-116b2c580268" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var details = {
+	user:{
+		"name": "Clare",
+		"age": "21"
+	},
+	user:{
+		"name": "Chris",
+		"age": "22"
+	},
+	user:{
+		"name": "Savio",
+		"age": "26"
+	}
+}
+
+output application/json
+---
+details.user]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="multiple object" doc:id="210dc03d-9380-4bcd-9cd4-97127225f62e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var details = {
+	user:{
+		"name": "Clare",
+		"age": "21"
+	},
+	user:{
+		"name": "Chris",
+		"age": "22"
+	},
+	user:{
+		"name": "Savio",
+		"age": "26"
+	}
+}
+
+output application/json
+---
+details.*user]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="descendant value selector" doc:id="0c228a7c-189f-4045-901b-66090e5368a5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var details = {
+	user:{
+		"name": {
+			"fname": "Clare",
+			"lname": "Rebello"
+		},
+		"age": "21"
+	},
+	user:{
+		"name": {
+			"fname": "Chris",
+			"lname": "Dias"
+		},
+		"age": "22"
+	},
+	user:{
+		"name": {
+			"fname": "Savio",
+			"lname": "Gonsalves"
+		},
+		"age": "26"
+	}
+}
+
+output application/json
+---
+details.*user..fname]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="key-value selector" doc:id="ea5c150e-e908-4ed5-b262-2bb19330fe73" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var details = {
+	user:{
+		"name": "Clare",
+		"age": "21"
+	},
+	user:{
+		"name": "Chris",
+		"age": "22"
+	},
+	user:{
+		"name": "Savio",
+		"age": "26"
+	}
+}
+
+output application/json
+---
+details.*user.&name]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="index selector" doc:id="58533d92-281b-4a99-9c4f-cef91edd1f2a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var details = {
+	user:{
+		"name": "Clare",
+		"age": "21"
+	},
+	user:{
+		"name": "Chris",
+		"age": "22"
+	},
+	user:{
+		"name": "Savio",
+		"age": "26"
+	}
+}
+
+output application/json
+---
+details.*user[2]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="selectors_for_strings" doc:id="7e9a1f74-ac26-422c-8d95-8727e6769642" >
+		<ee:transform doc:name="index selector" doc:id="a51e5920-c6d3-4b15-ba3c-bd3bc39983ee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var s = "Hello World"
+
+output application/json
+---
+s[5]
+// the space betn hello world is printed]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="range selector" doc:id="2053c37e-214a-4471-a348-2ab923224a2f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var s = "Hello World"
+
+output application/json
+---
+s[0 to 4]
+// the range selector]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="basicFlow2" doc:id="4baf2b75-9a49-4c8f-988c-93a476b12aed" >
+		<ee:transform doc:name="map &amp; merge two arrays" doc:id="2215e6cf-32c4-4136-8834-673f1de7a27c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var books = [
+	{
+		"bookId": 101,
+		"title" : "MuleSoft",
+		"price" : 1000
+	},
+	{
+		"bookId": 102,
+		"title" : "Java",
+		"price" : 2000
+	},
+	{
+		"bookId": 103,
+		"title" : "Python",
+		"price" : 3000
+	}
+]
+
+var authors = [
+	{
+		"bookId": 101,
+		"name" : "Clare"
+	},
+	{
+		"bookId": 102,
+		"name" : "Chris"
+	},
+	{
+		"bookId": 103,
+		"name" : "Savio"
+	}
+]
+
+output application/json
+---
+
+{
+	bookCollection: books map (item, index) ->
+	using (id = item.bookId){
+		"Id": id,
+		"Title": item.title,
+		"Cost": item.price ++ " Rupees",
+		
+		(authors filter ($.*bookId contains id) map(item) -> {
+			"author_name": item.name
+		})
+	}
+}
+
+
+
+
+
+
+
+
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="return values of only matching keys within an object" doc:id="44884745-a6ad-454b-849f-a272c406e1e3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+var books = [
+	"book":{
+		"bookId": 101,
+		"title" : "MuleSoft",
+		"price" : 1000
+	},
+	"book":{
+		"bookId": 102,
+		"title" : "Java",
+		"price" : 2000
+	},
+	"book":{
+		"bookId": 103,
+		"title" : "Python",
+		"price" : 3000
+	},
+	"book":{
+		"bookId": 104,
+		"title" : "C"
+	}
+]
+
+output application/json
+---
+
+books.book.*price[?$>1000]
+
+// ? -> checks if the "price" key exists
+// if there check value
+
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

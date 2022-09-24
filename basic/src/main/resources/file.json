@@ -1,0 +1,28 @@
+{
+	"candidates": [
+	{
+		"fname": "Clare",
+		"lname": "Rebello",
+		"age": 21
+	},
+	{
+		"fname": "Chris",
+		"lname": "Rebello",
+		"age": 22
+	},
+	{
+		"fname": "Savio",
+		"lname": "Rebello",
+		"age": 25
+	},
+	{
+		"fname": "Kavita",
+		"lname": "Rebello",
+		"age": 55
+	},
+	{
+		"fname": "Richard",
+		"lname": "Rebello",
+		"age": 57
+	}]
+}

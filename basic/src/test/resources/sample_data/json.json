@@ -1,0 +1,12 @@
+{
+  "candidates": {
+    "name1": {
+      "fname": "Cyril",
+      "lname": "Alva"
+    },
+    "name2": {
+      "fname": "Aletha",
+      "lname": "Chris"
+    }
+  }
+}
