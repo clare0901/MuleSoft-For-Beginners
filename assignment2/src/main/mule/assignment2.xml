@@ -43,7 +43,8 @@ output application/json
 {
 	products: itemsList.items.item map (item,index) -> 
 	item.description filter (sum_prices_cost > item.quantity * item.unit_price )
-}]]></ee:set-payload>
+}
+]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>

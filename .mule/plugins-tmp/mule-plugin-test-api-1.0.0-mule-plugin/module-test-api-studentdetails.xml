@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="test API (Student details)"
+        prefix="test-api-studentdetails"
+        namespace="http://www.mulesoft.org/schema/mule/test-api-studentdetails"
+        
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           
+           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+
+    <property name="property_host" displayName="host" type="string"  summary="Host for consuming API"/>
+    <property name="property_port" displayName="port" type="string"  summary="Port for consuming API"/>
+    <property name="property_basePath" displayName="basePath" type="string" defaultValue="/" summary="Basepath for consuming API"/>
+    <property name="property_protocol" displayName="protocol" type="string"  summary="Protocol for consuming API"/>
+
+        <property name="property_proxyConfig" displayName="Proxy Config Reference" type="string" use="OPTIONAL" summary="Proxy config reference" tab="Proxy"/>
+        <property name="property_responseTimeout" displayName="Response timeout" type="string" defaultValue="10000" summary="Maximum time in milliseconds that the request element will block the execution of the flow waiting for the HTTP response."/>
+
+    
+    
+
+    <http:request-config
+name="test-api-studentdetails-httpreq-config" xmlns:connection="true"
+responseTimeout="#[vars.property_responseTimeout]"
+basePath="#[vars.property_basePath]">
+<http:request-connection
+host="#[vars.property_host]"
+protocol="#[vars.property_protocol]"
+port="#[vars.property_port]"
+proxyConfig="#[vars.property_proxyConfig]"
+>
+</http:request-connection>
+</http:request-config>
+
+
+
+
+    <operation name="get-details-of-all-students" displayName="Get details of all students" >
+        <parameters>
+                                        <parameter name="standard"
+                                        type="standard"
+                                        use="REQUIRED"                    />
+                                    <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+                <http:request config-ref="test-api-studentdetails-httpreq-config"
+              path="/student"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+                <mule:error-mapping sourceType="HTTP:PARSING" targetType="TEST-API-STUDENTDETAILS:PARSING" />
+            <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="TEST-API-STUDENTDETAILS:TIMEOUT" />
+            <mule:error-mapping sourceType="HTTP:SECURITY" targetType="TEST-API-STUDENTDETAILS:SECURITY" />
+            <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="TEST-API-STUDENTDETAILS:CONNECTIVITY" />
+            <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="TEST-API-STUDENTDETAILS:BAD_REQUEST" />
+            <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="TEST-API-STUDENTDETAILS:UNAUTHORIZED" />
+            <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="TEST-API-STUDENTDETAILS:FORBIDDEN" />
+            <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="TEST-API-STUDENTDETAILS:METHOD_NOT_ALLOWED" />
+            <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="TEST-API-STUDENTDETAILS:NOT_FOUND" />
+            <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="TEST-API-STUDENTDETAILS:NOT_ACCEPTABLE" />
+            <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="TEST-API-STUDENTDETAILS:UNSUPPORTED_MEDIA_TYPE" />
+            <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="TEST-API-STUDENTDETAILS:TOO_MANY_REQUESTS" />
+            <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="TEST-API-STUDENTDETAILS:INTERNAL_SERVER_ERROR" />
+            <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="TEST-API-STUDENTDETAILS:SERVICE_UNAVAILABLE" />
+            <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="TEST-API-STUDENTDETAILS:RETRY_EXHAUSTED" />
+        
+            <http:headers>
+            <![CDATA[#[ { 'Accept': 'application/json' } filterObject $ != null ]]]>
+        </http:headers>
+                    <http:query-params>
+            <![CDATA[#[ { 'Standard': vars['standard'] } filterObject $ != null ]]]>
+        </http:query-params>
+    </http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+                    <output type="get-details-of-all-students-response-type" />
+                <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                            <error type="PARSING"/>
+                            <error type="TIMEOUT"/>
+                            <error type="SECURITY"/>
+                            <error type="CONNECTIVITY"/>
+                            <error type="BAD_REQUEST"/>
+                            <error type="UNAUTHORIZED"/>
+                            <error type="FORBIDDEN"/>
+                            <error type="METHOD_NOT_ALLOWED"/>
+                            <error type="NOT_FOUND"/>
+                            <error type="NOT_ACCEPTABLE"/>
+                            <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                            <error type="TOO_MANY_REQUESTS"/>
+                            <error type="INTERNAL_SERVER_ERROR"/>
+                            <error type="SERVICE_UNAVAILABLE"/>
+                            <error type="RETRY_EXHAUSTED"/>
+                    </errors>
+    </operation>
+    <operation name="add-detail-of-a-student" displayName="Add detail of a student" >
+        <parameters>
+                            <parameter name="add-detail-of-a-student-request-data" type="add-detail-of-a-student-request-type" use="REQUIRED" role="PRIMARY" />
+                                                <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+                <http:request config-ref="test-api-studentdetails-httpreq-config"
+              path="/student"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+                <mule:error-mapping sourceType="HTTP:PARSING" targetType="TEST-API-STUDENTDETAILS:PARSING" />
+            <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="TEST-API-STUDENTDETAILS:TIMEOUT" />
+            <mule:error-mapping sourceType="HTTP:SECURITY" targetType="TEST-API-STUDENTDETAILS:SECURITY" />
+            <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="TEST-API-STUDENTDETAILS:CONNECTIVITY" />
+            <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="TEST-API-STUDENTDETAILS:BAD_REQUEST" />
+            <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="TEST-API-STUDENTDETAILS:UNAUTHORIZED" />
+            <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="TEST-API-STUDENTDETAILS:FORBIDDEN" />
+            <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="TEST-API-STUDENTDETAILS:METHOD_NOT_ALLOWED" />
+            <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="TEST-API-STUDENTDETAILS:NOT_FOUND" />
+            <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="TEST-API-STUDENTDETAILS:NOT_ACCEPTABLE" />
+            <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="TEST-API-STUDENTDETAILS:UNSUPPORTED_MEDIA_TYPE" />
+            <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="TEST-API-STUDENTDETAILS:TOO_MANY_REQUESTS" />
+            <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="TEST-API-STUDENTDETAILS:INTERNAL_SERVER_ERROR" />
+            <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="TEST-API-STUDENTDETAILS:SERVICE_UNAVAILABLE" />
+            <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="TEST-API-STUDENTDETAILS:RETRY_EXHAUSTED" />
+                <http:body>
+            <![CDATA[#[output application/json --- vars['add-detail-of-a-student-request-data']]
+]]>
+        </http:body>
+    
+            <http:headers>
+            <![CDATA[#[ { 'Accept': 'application/json' } filterObject $ != null ]]]>
+        </http:headers>
+            </http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+                    <output type="string" />
+                <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                            <error type="PARSING"/>
+                            <error type="TIMEOUT"/>
+                            <error type="SECURITY"/>
+                            <error type="CONNECTIVITY"/>
+                            <error type="BAD_REQUEST"/>
+                            <error type="UNAUTHORIZED"/>
+                            <error type="FORBIDDEN"/>
+                            <error type="METHOD_NOT_ALLOWED"/>
+                            <error type="NOT_FOUND"/>
+                            <error type="NOT_ACCEPTABLE"/>
+                            <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                            <error type="TOO_MANY_REQUESTS"/>
+                            <error type="INTERNAL_SERVER_ERROR"/>
+                            <error type="SERVICE_UNAVAILABLE"/>
+                            <error type="RETRY_EXHAUSTED"/>
+                    </errors>
+    </operation>
+    <operation name="get-student-detail-by-id" displayName="Get student detail by ID" >
+        <parameters>
+                                        <parameter name="id"
+                                        type="string"
+                                        use="REQUIRED"                    />
+                                    <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+                <http:request config-ref="test-api-studentdetails-httpreq-config"
+              path="/student/{id}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+                <mule:error-mapping sourceType="HTTP:PARSING" targetType="TEST-API-STUDENTDETAILS:PARSING" />
+            <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="TEST-API-STUDENTDETAILS:TIMEOUT" />
+            <mule:error-mapping sourceType="HTTP:SECURITY" targetType="TEST-API-STUDENTDETAILS:SECURITY" />
+            <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="TEST-API-STUDENTDETAILS:CONNECTIVITY" />
+            <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="TEST-API-STUDENTDETAILS:BAD_REQUEST" />
+            <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="TEST-API-STUDENTDETAILS:UNAUTHORIZED" />
+            <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="TEST-API-STUDENTDETAILS:FORBIDDEN" />
+            <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="TEST-API-STUDENTDETAILS:METHOD_NOT_ALLOWED" />
+            <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="TEST-API-STUDENTDETAILS:NOT_FOUND" />
+            <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="TEST-API-STUDENTDETAILS:NOT_ACCEPTABLE" />
+            <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="TEST-API-STUDENTDETAILS:UNSUPPORTED_MEDIA_TYPE" />
+            <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="TEST-API-STUDENTDETAILS:TOO_MANY_REQUESTS" />
+            <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="TEST-API-STUDENTDETAILS:INTERNAL_SERVER_ERROR" />
+            <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="TEST-API-STUDENTDETAILS:SERVICE_UNAVAILABLE" />
+            <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="TEST-API-STUDENTDETAILS:RETRY_EXHAUSTED" />
+        
+            <http:headers>
+            <![CDATA[#[ { 'Accept': 'application/json' } filterObject $ != null ]]]>
+        </http:headers>
+                <http:uri-params>
+            <![CDATA[#[ { 'id': vars['id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+        </http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+                    <output type="string" />
+                <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                            <error type="PARSING"/>
+                            <error type="TIMEOUT"/>
+                            <error type="SECURITY"/>
+                            <error type="CONNECTIVITY"/>
+                            <error type="BAD_REQUEST"/>
+                            <error type="UNAUTHORIZED"/>
+                            <error type="FORBIDDEN"/>
+                            <error type="METHOD_NOT_ALLOWED"/>
+                            <error type="NOT_FOUND"/>
+                            <error type="NOT_ACCEPTABLE"/>
+                            <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                            <error type="TOO_MANY_REQUESTS"/>
+                            <error type="INTERNAL_SERVER_ERROR"/>
+                            <error type="SERVICE_UNAVAILABLE"/>
+                            <error type="RETRY_EXHAUSTED"/>
+                    </errors>
+    </operation>
+
+</module>

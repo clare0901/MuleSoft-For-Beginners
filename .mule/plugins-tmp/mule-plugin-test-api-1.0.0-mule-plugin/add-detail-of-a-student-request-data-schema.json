@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/Student",
+  "definitions": {
+    "Student": {
+      "x-amf-examples": {
+        "example_0": {
+          "RollNo": 1,
+          "FName": "Clare",
+          "LName": "Rebello",
+          "Class": "Std6",
+          "TotalMarks": 50
+        },
+        "example_1": {
+          "FName": "Clare",
+          "LName": "Rebello",
+          "Class": "Std6",
+          "TotalMarks": 50
+        }
+      },
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "FName",
+        "LName",
+        "Class",
+        "TotalMarks"
+      ],
+      "properties": {
+        "RollNo": {
+          "type": "number"
+        },
+        "FName": {
+          "type": "string"
+        },
+        "LName": {
+          "type": "string"
+        },
+        "Class": {
+          "type": "string"
+        },
+        "TotalMarks": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
